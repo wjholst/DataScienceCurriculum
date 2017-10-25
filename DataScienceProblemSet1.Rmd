@@ -2,6 +2,8 @@
 title: "Data Science Examples and Problems"
 output:
   html_document: default
+  
+#  pdf_document: default
 ---
 ## Overview
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
@@ -13,6 +15,11 @@ Because it is included in the R distribution, you can get immediate help by ente
 ?iris
 
 he ? is a general purpose tool for command-line help.
+
+Here is an illustration of the iris attributes.
+
+![](http://sebastianraschka.com/images/blog/2015/principal_component_analysis_files/iris.png)
+
 
 If you want to explore other included datasets, type
 
@@ -84,21 +91,22 @@ It is your turn now. You should fill in each section with R code to answer the q
 
 Hint: try using the dplyr library operators like group_by, summarize, and %>% (pipe).
 
-Your code goes here:
 
 ```{r}
+library(dplyr)
+#Start with this:
 
-
-
-
-
+iris %>%
+    group_by(Species)
+#
+#   add summarize here
 
 ```
 
 
 #### Plot points for each of the three species of Sepal.length vs. Sepal.Wide and Petal.Length vs. Petal.Width. 
 
-This should produce 6 graphs which look something like this that I created using the mtcars dataset. First the built in plot function, which plots mpg vs hp:
+This should produce 6 graphs which look something like the ggplot below that I created using the mtcars dataset. First the built-in plot function, which simply plots mpg vs hp:
 
 ```{r}
 plot(x = mtcars$hp, y = mtcars$mpg,main="Miles per gallon vs. horsepower",xlab="Horsepower",ylab = "Miles per Gallon")
@@ -113,13 +121,10 @@ ggplot (mtcars,aes(x=hp,y=mpg)) + geom_point() + facet_wrap (~cyl,nrow=1)
 
 Try using ggplot and place the graphs 3 accross and two down, with Sepal in the upper set of graphs and petal in the lower.
 
-Put the code for your plot here.
-
 ```{r}
 
 
-
-
+# Put the code for your plot here.
 
 
 ```
@@ -136,33 +141,36 @@ Now with one of the ggplot renderings, add a linear regression line to the plot.
 ggplot (mtcars,aes(x=hp,y=mpg)) + geom_point() + geom_smooth(method=lm)   
 
 ```
-Your code goes here:
+
+Add the linear regression line, with the confidence interval.
 
 ```{r}
+
+
+# Your code goes here:
+
+
 
 ```
 
 
-setosa = iris[iris$Species=="setosa",]
-versicolor = iris[iris$Species=="versicolor",]
-virginica = iris[iris$Species=="virginica",]
-
- x=iris %>% gather(attribute,size , Sepal.Length:Petal.Width)
- xx = x %>% group_by (Species, attribute) %>% 
-    summarize(mean(size), sd(size))
- 
 #### Use the gather function from the tidyr library to compute mean and standard deviations without having to explicitly name each of the length and width columns. Try writing this as one R statement.
 
-Your code goes here:
-```{r}
 
-```
-
-
-Pointer to dplyr and tidyr
+Here is a pointer to dplyr and tidyr:
 
 https://rpubs.com/bradleyboehmke/data_wrangling
 
+
+```{r}
+
+
+
+# Your code goes here:
+
+
+
+```
 
 
 #### Explore the use of 3 dimensional plotting with the plotly library. Use the plot_ly function. Plot the dimensions on the x,y, and z coordinates and the species with colors.
@@ -186,6 +194,15 @@ p
 
 ```
 
+Generate a similar plot with plot_ly function.
+
+```{r}
+
+# Your code here
+
+```
+
+
 #### Based on your graphs that you created, explore potential machine learning questions.
 
 If you were considering a machine learning algorithm to predict iris species based on the measured attributes, which species do you think the the algorithm will do best? 
@@ -202,23 +219,6 @@ Why?
 ### Appendix
 
 
-Here is an example with the mtcars sample dataset.
-
-library(plotly)
-
-mtcars$am[which(mtcars$am == 0)] <- 'Automatic'
-mtcars$am[which(mtcars$am == 1)] <- 'Manual'
-mtcars$am <- as.factor(mtcars$am)
-
-p <- plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, colors = c('#BF382A', '#0C4B8E')) %>%
-  add_markers() %>%
-  layout(scene = list(xaxis = list(title = 'Weight'),
-                     yaxis = list(title = 'Gross horsepower'),
-                     zaxis = list(title = '1/4 mile time')))
-
-pSpecies = plot_ly(iris, x = ~Sepal.Length, y=~Petal.Length, z=~Sepal.Width, color=~Species)
-p
-kable(xx)
 
 Nice web app for visualization
 https://yuyangliu.shinyapps.io/iris_result/
@@ -238,27 +238,4 @@ https://www.r-bloggers.com/simpler-r-coding-with-pipes-the-present-and-future-of
 
 Nice collection of ggplot graphs: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
 
-library(tidyr)
-iris.by.Sepal.Length <- gather(iris,
-                           value = "value",
-                           key = "type",
-                           Sepal.Length, Sepal.Width)
-ggplot(iris.by.Sepal.Length,
-       aes(x=Species,
-           y=value,
-           color=type)) +
-  geom_line()
-  
-test<-function(df) df[chull(df$Sepal.Length,df$Sepal.Width),]
-  
- iris2<-plyr::ddply(iris,"Species",test)
-ggplot(iris,aes(Sepal.Length,Sepal.Width))+
-    geom_point(data=iris,aes(color=Species))+
-    geom_polygon(data=iris2,alpha=.3,aes(Sepal.Length,Sepal.Width,fill=Species))+
-    theme(legend.position = "bottom",plot.title = element_text(size = 15,hjust = 0.5))+
-  annotate("segment",x=6,xend=5.8,y=3.75,yend =4 ,arrow=arrow(),color="black")+
-  annotate("segment",x=6.2,xend=6.2,y=3.65,yend =3.4 ,arrow=arrow(),color="black")+
-  annotate("segment",x=6.1,xend=6,y=3.65,yend =3.4 ,arrow=arrow(),color="black")+
-  annotate("text",x=6.21,y=3.72,label="marginal points",color="black",size=3)
-```
-  
+

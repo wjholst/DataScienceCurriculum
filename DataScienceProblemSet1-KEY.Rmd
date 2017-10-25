@@ -1,0 +1,264 @@
+---
+title: "Data Science Examples and Problems"
+output:
+  html_document: default
+---
+## Overview
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+The purpose of this notebook is provide some examples and problems for students to explore the use of R in analyzing data. For this set of problems, we use the built-in dataset called 'iris', based on Ronald Fischer's 1936 pioneering work on statistics in biology. It is a multivariate data set introduced in his paper, "The use of multiple measurements in taxonomic problems."
+
+Because it is included in the R distribution, you can get immediate help by entering:
+
+?iris
+
+he ? is a general purpose tool for command-line help.
+
+Here is an illustration of the iris attributes.
+![](http://sebastianraschka.com/images/blog/2015/principal_component_analysis_files/iris.png)
+
+
+If you want to explore other included datasets, type
+
+library(help = "datasets")
+
+This will give you a list of all included datasets in the dataset library for R.
+
+Nice! we have inline help which describes our dataset. This is available for all included datasets.
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+First some information about the dataset. 
+
+* The dim() function tells the dimension of the dataset
+* The summary tells us something about structure
+* Str() function gives is more information
+
+```{r}
+dim(iris)
+summary(iris)
+str(iris)
+```
+
+
+Here is a quick look at the data graphically. It demonstrates both the built-in plot function and the ggplot library.
+
+Note that the ggplot shows each species in a different color, so that plot provides more information.
+
+```{r, message=FALSE, warning=FALSE, comment=NA, echo=F }
+
+plot (x = iris$Sepal.Length, y = iris$Sepal.Width)
+
+library(ggplot2)
+
+ggplot(data = iris) +
+    geom_point(mapping = aes(x=Sepal.Length, y=Sepal.Width, color = Species))
+
+```
+
+The next plot shows regions of each species. Thanks to Yu Yang Liu for this code on Kaggle. https://www.kaggle.com/c34klh123/iris-data-with-ggplot-shiny/code
+
+The object convexHull is a function that computes the regions. It is called generating the iris2 dataframe.
+
+Note:  The "marginal points" are "NOT in the region".  They are "just outside the region"
+```{r}
+
+convexHull<-function(df) df[chull(df$Sepal.Length,df$Sepal.Width),]
+  
+iris2<-plyr::ddply(iris,"Species",convexHull)
+ggplot(iris,aes(Sepal.Length,Sepal.Width))+
+    geom_point(data=iris,aes(color=Species))+
+    geom_polygon(data=iris2,alpha=.3,aes(Sepal.Length,Sepal.Width,fill=Species))+
+    theme(legend.position = "bottom",plot.title = element_text(size = 15,hjust = 0.5))+
+  annotate("segment",x=6,xend=5.8,y=3.75,yend =4 ,arrow=arrow(),color="black")+
+  annotate("segment",x=6.2,xend=6.2,y=3.65,yend =3.4 ,arrow=arrow(),color="black")+
+  annotate("segment",x=6.1,xend=6,y=3.65,yend =3.4 ,arrow=arrow(),color="black")+
+  annotate("text",x=6.21,y=3.72,label="marginal points",color="black",size=3)
+
+
+```
+
+### Problem Set
+
+It is your turn now. You should fill in each section with R code to answer the question.
+
+#### What is are the overall mean for each attribute all species?
+
+Hint: try using the dplyr library operators like group_by, summarize, and %>% (pipe).
+
+Your code goes here:
+
+```{r, echo=FALSE}
+
+library(knitr)
+library(dplyr)
+
+mean(iris$Sepal.Length)
+mean(iris$Sepal.Width)
+mean(iris$Petal.Length)
+mean(iris$Petal.Width)
+
+# or this, which is much cleaner
+
+means = iris %>%
+    group_by(Species) %>%
+    summarize (mean(Sepal.Length),mean(Sepal.Width),mean(Petal.Length),
+               mean(Petal.Width))
+kable(means)
+```
+
+
+#### Plot points for each of the three species of Sepal.length vs. Sepal.Wide and Petal.Length vs. Petal.Width. 
+
+This should produce 6 graphs which look something like this that I created using the mtcars dataset. First the built in plot function, which plots mpg vs hp:
+
+```{r}
+plot(x = mtcars$hp, y = mtcars$mpg,main="Miles per gallon vs. horsepower",xlab="Horsepower",ylab = "Miles per Gallon")
+```
+
+Here are similar plots using ggplot which demonstrates three side-by-side graphs with the same x and y axes:
+```{r}
+
+ggplot (mtcars,aes(x=hp,y=mpg)) + geom_point() + facet_wrap (~cyl,nrow=1)
+
+```
+
+Try using ggplot and place the graphs 3 accross and two down, with Sepal in the upper set of graphs and petal in the lower.
+
+Put the code for your plot here.
+
+```{r}
+library(ggplot2)
+ggplot (iris,aes(x=Sepal.Width,y=Sepal.Length)) + geom_point() + facet_wrap(~Species,nrow=1)
+
+ggplot (iris,aes(x=Petal.Width,y=Petal.Length)) + geom_point() + facet_wrap(~Species,nrow=1)
+
+```
+
+#### Add linear regression line 
+
+Now with one of the ggplot renderings, add a linear regression line to the plot. For example:
+
+```{r}
+
+#  (by default includes 95% confidence region)
+
+ggplot (mtcars,aes(x=hp,y=mpg)) + geom_point() + geom_smooth(method=lm)   
+
+```
+
+
+```{r}
+
+ggplot (iris,aes(x=Sepal.Width,y=Sepal.Length)) + geom_point() + facet_wrap(~Species,nrow=1) +
+    geom_smooth(method=lm) 
+
+```
+
+
+
+
+ x=iris %>% gather(attribute,size , Sepal.Length:Petal.Width)
+ xx = x %>% group_by (Species, attribute) %>% 
+    summarize(mean(size), sd(size))
+ 
+#### Use the gather function from the tidyr library to compute mean and standard deviations without having to explicitly name each of the length and width columns. Try writing this as one R statement.
+
+Here is a pointer to dplyr and tidyr discussion. 
+
+https://rpubs.com/bradleyboehmke/data_wrangling
+
+Your code goes here:
+```{r}
+
+#Instead of this
+
+setosa = iris[iris$Species=="setosa",]
+versicolor = iris[iris$Species=="versicolor",]
+virginica = iris[iris$Species=="virginica",]
+mean(setosa$Sepal.Length)
+
+# use this to normalize the data
+
+library(tidyr)
+library(dplyr)
+
+setosa = iris[iris$Species=="setosa",]
+versicolor = iris[iris$Species=="versicolor",]
+virginica = iris[iris$Species=="virginica",]
+
+ x=iris %>% gather(attribute,size , Sepal.Length:Petal.Width) %>% 
+    group_by (Species, attribute) %>% 
+    summarize(mean(size), sd(size))
+ 
+ x
+
+```
+
+
+#### Explore the use of 3 dimensional plotting with the plotly library. Use the plot_ly function. Plot the dimensions on the x,y, and z coordinates and the species with colors.
+
+Here is an example:
+```{r}
+
+library(plotly)
+
+mtcars$am[which(mtcars$am == 0)] = 'Automatic'
+mtcars$am[which(mtcars$am == 1)] = 'Manual'
+mtcars$am = as.factor(mtcars$am)
+
+p = plot_ly(mtcars, x = ~wt, y = ~hp, z = ~qsec, color = ~am, 
+            colors = c('#BF382A', '#0C4B8E')) %>%
+            add_markers() %>%
+            layout(scene = list(xaxis = list(title = 'Weight'),
+                     yaxis = list(title = 'Gross horsepower'),
+                     zaxis = list(title = '1/4 mile time')))
+p
+
+```
+Your code here:
+
+```{r}
+library(plotly)
+pSpecies = plot_ly(iris, x = ~Sepal.Length, y=~Petal.Length, z=~Sepal.Width, color=~Species)
+pSpecies
+
+```
+
+
+#### Based on your graphs that you created, explore potential machine learning questions.
+
+If you were considering a machine learning algorithm to predict iris species based on the measured attributes, which species do you think the the algorithm will do best? 
+
+Why? 
+
+
+
+With which two species is there a possibility of errors in prediction? 
+
+Why? 
+
+
+
+### Appendix
+
+Nice web app for visualization
+https://yuyangliu.shinyapps.io/iris_result/
+
+https://www.kaggle.com/c34klh123/iris-data-with-ggplot-shiny/notebook
+
+http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html
+
+Nice 3d plotting libraries
+
+Plotly - https://plot.ly/r/
+
+plot3D - http://www.sthda.com/english/wiki/impressive-package-for-3d-and-4d-graph-r-software-and-data-visualization
+
+Discussion of pipes
+https://www.r-bloggers.com/simpler-r-coding-with-pipes-the-present-and-future-of-the-magrittr-package/
+
+Nice collection of ggplot graphs: http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+
