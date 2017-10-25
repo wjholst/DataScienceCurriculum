@@ -1,7 +1,8 @@
 ---
 title: "Data Science Examples and Problems"
 output:
-  html_document: default
+  html_document:
+    keep_md: true
   
 #  pdf_document: default
 ---
