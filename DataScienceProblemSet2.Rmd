@@ -27,8 +27,70 @@ count1sigma
 ```
 
 ### Add a Gaussian curve to the histogram
+Use the plot, curve, and abline functions to add the normal curve, mean, median, and standard deviations to the plot. Include a legend in the plot.
+
+```{r}
+mu = mean(x)
+sigma = sd(x)
+med = median(x)
+hist(x,breaks=15, main="Gaussian Curve over Histogram",prob=T)
+curve(dnorm(x, mean=mu, sd=sigma), 
+          col="darkblue", lwd=2, add=TRUE, yaxt="n")
+abline(v = mu,
+ col = "royalblue",
+ lwd = 2)
+
+abline(v = med,
+ col = "red",
+ lwd = 2)
+sdupper = mu + sigma
+sdlower = mu - sigma
+abline(v = sdupper,
+ col = "green",
+ lwd = 1)
+
+abline(v = sdlower,
+ col = "green",
+ lwd = 1)
+legend(x = "topright", # location of legend within plot area
+ c("Mean", "Median","Std Deviation"),
+ col = c("royalblue", "red", "green"),
+ lwd = c(2, 2, 2))
+
+```
+### Explore the Old Faithful dataset
+There is a built-in dataset in R called "faithful". Explore some of its properties.
+
+#### What is the dimension of the dataset?
+
+#### What are the two columns?
+
+#### Plot the waiting time. Does the histogram look Gaussian?
+
+#### Plot waiting on the x axis and eruptions (in minutes) on the y axis. What do you observe?
+
+```{r}
+plot (faithful$waiting, faithful$eruptions)
+
+```
+
+
+#### Do you think there is a relationship between erruptions and waiting time? Why or why not? What do you think the relationship might be? Could the relationship be explored with a linear model?
+
+#### Could your observations help build a better model for predicting eruption times when you have already waited for 68 minutes?
+
+
+### Explore the sample dataset.
+
+To do this, 
 
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+y <- rt(200, df = 5)
+qqnorm(y); qqline(y, col = 2)
+qqplot(y, rt(300, df = 5))
+
+dir()
 
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
