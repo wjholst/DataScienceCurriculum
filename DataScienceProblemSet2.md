@@ -23,12 +23,7 @@ The theoretical probability of points lying within 1 standard deviation of the m
 
 
 ```r
-count1sigma = length(which((x < 1) & (x > -1)))
-count1sigma                     
-```
-
-```
-## [1] 69
+# your code here
 ```
 
 ### Add a Gaussian curve to the histogram
@@ -36,35 +31,8 @@ Use the plot, curve, and abline functions to add the normal curve, mean, median,
 
 
 ```r
-mu = mean(x)
-sigma = sd(x)
-med = median(x)
-hist(x,breaks=15, main="Gaussian Curve over Histogram",prob=T)
-curve(dnorm(x, mean=mu, sd=sigma), 
-          col="darkblue", lwd=2, add=TRUE, yaxt="n")
-abline(v = mu,
- col = "royalblue",
- lwd = 2)
-
-abline(v = med,
- col = "red",
- lwd = 2)
-sdupper = mu + sigma
-sdlower = mu - sigma
-abline(v = sdupper,
- col = "green",
- lwd = 1)
-
-abline(v = sdlower,
- col = "green",
- lwd = 1)
-legend(x = "topright", # location of legend within plot area
- c("Mean", "Median","Std Deviation"),
- col = c("royalblue", "red", "green"),
- lwd = c(2, 2, 2))
+# your code here
 ```
-
-![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 ### Explore the Old Faithful dataset
 
@@ -74,11 +42,7 @@ There is a built-in dataset in R called "faithful". Explore some of its properti
 
 
 ```r
-dim (faithful)
-```
-
-```
-## [1] 272   2
+# your code here
 ```
 
 #### What are the two columns? What is the mean of each column?
@@ -87,32 +51,23 @@ Remember that the summary function is an object. Try using the [] operator to ex
 
 
 ```r
-summary(faithful)[4,]
-```
-
-```
-##         eruptions           waiting 
-## "Mean   :3.488  "  "Mean   :70.9  "
+# your code here
 ```
 
 #### Plot the waiting time. Does the histogram look Gaussian?
 
 
 ```r
-hist(faithful$waiting)
+# your code here
 ```
-
-![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 
 #### Plot waiting on the x axis and eruptions (in minutes) on the y axis. What do you observe?
 
 
 ```r
-plot (faithful$waiting, faithful$eruptions)
+# your code here
 ```
-
-![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 
 #### Do you think there is a relationship between erruptions and waiting time? 
@@ -129,7 +84,9 @@ How would build a subset to test this?
 
 #### Try the Q-Q plotting functions, qqnorm and qqline, to examine the distribution of waiting.
 
-Here is some sample code. Do the same with the faithful$waiting variable.
+Notice how closely the points fall to the theoretical line.
+
+Here is some sample code to generate the Q-Q plot. Do the same with the faithful$waiting variable.
 
 
 ```r
@@ -138,14 +95,21 @@ qqnorm(y); qqline(y, col = 2)
 ```
 
 ![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+```r
+# your qqnorm/qqline goes here code goes here
+```
+
+
 #### What does this plot show about the waiting data? Does it look normal?
 
-### Explore the sample dataset and compare it to our existing dataset.
+### Explore a new sample dataset and compare it to our original, existing dataset.
 
 To do this, use the read.csv function to download our data. Here is the code that will read the dataset.
 
 
 ```r
+set.seed(456)
 test = rnorm(n=200,mean = 0.3, sd = 1.4)
 write.csv (data.frame(test),file="testSample.csv",row.names = F)
 
@@ -165,17 +129,7 @@ The testSample data contains one variable, test. Find the mean and standard devi
 
 
 ```r
-summary(testSample)
-```
-
-```
-##       test        
-##  Min.   :-3.2019  
-##  1st Qu.:-0.5661  
-##  Median : 0.2912  
-##  Mean   : 0.3033  
-##  3rd Qu.: 1.1072  
-##  Max.   : 4.4489
+# your code here
 ```
 
 
@@ -200,17 +154,12 @@ hist(h2, col=rgb(0,0,1,0.5), add=T)
 box()
 ```
 
-![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
 
 ```r
 #Your code here
-
-hist(x, col=rgb(1,0,0,0.7),xlim=c(-4,4), ylim=c(0,0.5),freq = F,breaks = 15, main = "Histogram Comparison")
-hist(testSample$test, col=rgb(0,0,1,0.5),breaks = 15 ,freq = F, add = T)
-box()
 ```
-
-![](DataScienceProblemSet2_files/figure-html/unnamed-chunk-11-2.png)<!-- -->
 
 
 
