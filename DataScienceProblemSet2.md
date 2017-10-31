@@ -146,8 +146,8 @@ To do this, use the read.csv function to download our data. Here is the code tha
 
 
 ```r
-x = rnorm(n=200,mean = 0.2, sd = 1.4)
-write.csv (data.frame(x),file="testSample.csv",row.names = F)
+test = rnorm(n=200,mean = 0.3, sd = 1.4)
+write.csv (data.frame(test),file="testSample.csv",row.names = F)
 
 library(RCurl)
 ```
@@ -158,12 +158,25 @@ library(RCurl)
 
 ```r
 testSampleUrl = getURL("https://raw.githubusercontent.com/wjholst/DataScienceCurriculum/master/testSample.csv")
-testSample <- read.csv(text = testSampleUrl)
+testSample = read.csv(text = testSampleUrl)
 ```
 
-The testSample data contains one variable, x. Find the mean and standard deviation of the testSample data. 
+The testSample data contains one variable, test. Find the mean and standard deviation of the testSample data. 
 
 
+```r
+summary(testSample)
+```
+
+```
+##       test        
+##  Min.   :-3.2019  
+##  1st Qu.:-0.5661  
+##  Median : 0.2912  
+##  Mean   : 0.3033  
+##  3rd Qu.: 1.1072  
+##  Max.   : 4.4489
+```
 
 
 Do you think it is the same as our previous dataset x? 
@@ -193,7 +206,7 @@ box()
 #Your code here
 
 hist(x, col=rgb(1,0,0,0.7),xlim=c(-4,4), ylim=c(0,0.5),freq = F,breaks = 15, main = "Histogram Comparison")
-hist(testSample$x, col=rgb(0,0,1,0.5),breaks = 15 ,freq = F, add = T)
+hist(testSample$test, col=rgb(0,0,1,0.5),breaks = 15 ,freq = F, add = T)
 box()
 ```
 
