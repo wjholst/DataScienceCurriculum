@@ -15,6 +15,10 @@ Try executing code chunk by clicking the *Run* button within the chunk or by pla
 R has a number of built-in functions to help you create datasets for testing. For example, you could generate a set of data that represents a Gaussian distribution, sometimes called a "Normal" curve. We generate a set of 100 with a mean of 0 and a standard deviation of 1. Then we plot it as a histogram.
 
 ```{r}
+
+# setup working directory
+
+setwd("~/GitHub/DataScienceCurriculum/DataScienceCurriculum")
 set.seed(123)
 x = rnorm(n=100, mean = 0, sd = 1)
 hist(x,breaks=12)
@@ -136,14 +140,16 @@ qqnorm(faithful$waiting); qqline(faithful$w, col = 2)
 To do this, use the read.csv function to download our data. Here is the code that will read the dataset.
 
 ```{r}
+
 set.seed(456)
 test = rnorm(n=200,mean = 0.3, sd = 1.4)
 write.csv (data.frame(test),file="testSample.csv",row.names = F)
 
 library(RCurl)
 
-testSampleUrl = getURL("https://raw.githubusercontent.com/wjholst/DataScienceCurriculum/master/testSample.csv")
-testSample = read.csv(text = testSampleUrl)
+#testSampleUrl = getURL("https://raw.githubusercontent.com/wjholst/DataScienceCurric#ulum/master/testSample.csv")
+#testSample = read.csv(text = testSampleUrl)
+testSample = read.csv("testSample.csv")
 
 ```
 

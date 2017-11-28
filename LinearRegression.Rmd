@@ -1,0 +1,193 @@
+---
+title: "Simple Linear Regression"
+output:
+  html_document: default
+  html_notebook: default
+  keep_md: true
+---
+
+The purpose of this document is to explore the use of linear regression to understand relationships between two variables. 
+
+The dataset we will explore contains child age (years) and height (inches). You have probably noticed that young children seem to grow at a fairly constant rate for the first few years of their lives. We construct a simple dataframe for this analysis. In this dataframe, x is age, y is height.
+
+```{r}
+x = c(2,3,4,5,6)
+y = c(35,36,41,45,44)
+df = data.frame(x)
+df$y = y
+plot(df$x,df$y) 
+```
+
+When plotted, the data seems to indicate a relationship between x and y.
+
+### The Equations
+
+Remembering that the equation for a line is y = mx + b, it seems like we should be able to pass a line through the 5 points such that the distance of the y value from the line is minimized. We take a guess at m and b, using a slope m =2.4 and a y intercept of 31. This yields a graph that looks like this.
+
+```{r}
+plot(df$x,df$y) 
+curve(2.4*x + 31, 1, 7,add = T)
+```
+
+That looks somewhat reasonable, but is was a guess based on observation.
+
+The actual formula for calculating m:
+$$m = \frac{\overline{xy} - \overline{x}\ \overline{y}}{\overline{x^2}-\overline{x}^2}
+$$
+
+and for b:
+
+ $$b = \overline{y} -m\overline{x} $$
+
+For a detailed discussion of the derivation of these formulas, see the first 5 videos at:
+
+https://www.khanacademy.org/math/statistics-probability/describing-relationships-quantitative-data#more-on-regression
+
+### Calculate the Coeffients
+
+Let's calculate these coefficients. We add a column to our dataframe for the xy product.
+
+```{r}
+df$xy = df$x * df$y
+xbar = mean(df$x)
+ybar = mean(df$y)
+xsqrbar = mean(df$x^2)
+m = (mean(df$xy) - xbar * ybar)/(xsqrbar - xbar^2)
+b = ybar - m*xbar
+c("Value for m:", round(m,2))
+c("Value for b:",round(b,2))
+```
+### Plot the Computed Values
+
+We now plot the computed values for m and b and observed that the line looks like a better fit.
+
+```{r}
+plot(df$x,df$y) 
+curve(m*x + b, 1, 7,add = T)
+```
+
+### The Correlation Coefficient
+
+This line minimizes the squared error of the distance from each y point to the x value on the line.
+
+Even though we have the slope and y intercept for the line, we don't really know how "good" these values are. Fortunately, there is another statistic called the correlation coefficient which measures the "effectiveness" of the equation in predicting y. It could be thought of as how much (percent) of the total variation y y is described by the variation in x. This is called the coefficient of determination or r squared (r^2). If the values are close to the line, then this number will be close to 1. 
+
+The value r is called the correlation coefficient or the covariance. 
+
+The formula is 
+
+$$r = \frac{n\sum(xy)-\sum(x)\sum(y)}{\sqrt{[n\sum(x^2)-\sum(x)^2] [(n\sum(y^2)-\sum(y)^2)]}} $$
+
+Calculating for these values:    
+
+```{r}
+n = length(df$x)
+num = n * sum(df$xy) - sum(df$x) * sum(df$y)
+
+t1 = n * sum (df$x^2) - sum (df$x)^2 
+t2 = n * sum(y^2) - sum(y)^2
+
+denom = sqrt(t1 * t2)
+
+r = num/denom
+r
+r^2
+```
+The F statistic and the related t statistic are the correct tests to verify the "closeness" of the points to the line.
+
+F = regression sum of squares / (residual SS / (n-2))
+
+This can be expressed in terms of r and n.
+
+r^2 = regressionSS/totalSS, so
+regressionSS = r^2 * totalSS
+residualSS = (1-r^2)*totalSS
+
+Substituting
+
+F = [r^2 * (n-2)]/(1-r^2)
+t = sqrt(F)
+
+This follws the t distribution with n-2 degrees of freedom.
+
+We calculate the F and t statistics, and the value for p. 
+
+The p-value for each term tests the null hypothesis that the coefficient is equal to zero (no effect). A low p-value (< 0.05) indicates that you can reject the null hypothesis. In other words, a predictor that has a low p-value is likely to be a meaningful addition to your model because changes in the predictor's value are related to changes in the response variable.
+
+```{r}
+F = r^2*(n-2)/(1-r^2)
+t = sqrt(F)
+p = 2*pt(-abs(t),df=n-2)
+F
+t
+p
+```
+
+### Build a Linear Regression Function
+
+We now have all the pieces to encapsulate these formulas into a function that will solve linear regression problems and compute the appropriate statistics. Your goal is to fill in the details of that function. The overview of the function is:
+```{r}
+
+LinearRegression = function(xval, yval) {
+# the following variables should be calculated from
+# the x and y vectors provided as parameters to the function.
+#
+# First calculate n, which is the number of elements in the arrays
+
+n = length(x)
+degFreedom = n-2
+#
+# now, solve for the rest. Sample values are filled in
+# replace the following code
+#
+slope = 2.7
+yIntercept = 31
+r =-0.92
+rsqr = r^2
+F = 31
+t = sqrt(F)
+p = 0.021
+#
+# this function will return a dataframe object with the elements filled in
+# build the object
+#
+df1 = NULL
+df1 = data.frame (slope)  
+df1$intercept = yIntercept
+df1$n = n
+df1$r = r
+df1$rsquared = rsqr
+df1$F = F
+df1$t = t
+df1$p = p
+df1$degFreedom = degFreedom
+df1    
+}
+# calling sequence
+#
+# model = LinearRegression(x,y)
+#
+```
+Call this with the data we started with.
+
+```{r}
+
+linmodel = LinearRegression(df$x, df$y)
+linmodel
+
+```
+
+
+Now verify this with the built-in lm function in R:
+    
+```{r}
+
+linm = lm(df$y ~ df$x)
+summary(linm)
+
+```
+Do your results agree? If not, make corrections, and run your function again!
+
+### Hint 
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).

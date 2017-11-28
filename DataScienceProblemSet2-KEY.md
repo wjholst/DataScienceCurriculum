@@ -10,6 +10,9 @@ R has a number of built-in functions to help you create datasets for testing. Fo
 
 
 ```r
+# setup working directory
+
+setwd("~/GitHub/DataScienceCurriculum/DataScienceCurriculum")
 set.seed(123)
 x = rnorm(n=100, mean = 0, sd = 1)
 hist(x,breaks=12)
@@ -169,8 +172,9 @@ library(RCurl)
 ```
 
 ```r
-testSampleUrl = getURL("https://raw.githubusercontent.com/wjholst/DataScienceCurriculum/master/testSample.csv")
-testSample = read.csv(text = testSampleUrl)
+#testSampleUrl = getURL("https://raw.githubusercontent.com/wjholst/DataScienceCurric#ulum/master/testSample.csv")
+#testSample = read.csv(text = testSampleUrl)
+testSample = read.csv("testSample.csv")
 ```
 
 The testSample data contains one variable, test. Find the mean and standard deviation of the testSample data. 
@@ -182,12 +186,12 @@ summary(testSample)
 
 ```
 ##       test        
-##  Min.   :-3.2019  
-##  1st Qu.:-0.5661  
-##  Median : 0.2912  
-##  Mean   : 0.3033  
-##  3rd Qu.: 1.1072  
-##  Max.   : 4.4489
+##  Min.   :-2.9497  
+##  1st Qu.:-0.6821  
+##  Median : 0.2478  
+##  Mean   : 0.3027  
+##  3rd Qu.: 1.4359  
+##  Max.   : 3.4920
 ```
 
 ```r
@@ -195,7 +199,7 @@ sd (testSample$test)
 ```
 
 ```
-## [1] 1.374304
+## [1] 1.387864
 ```
 
 
